@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <thread>
 
+#include 
+
 namespace Win {
 	struct wParam;
 	struct lParam;
@@ -294,6 +296,11 @@ namespace Win {
 		{
 			e.onResize(l, w);
 		};
+		constexpr static bool event_has_onCreate = requires (CallbackClass e, HWND hwnd, CREATESTRUCTA createStruct)
+		{
+			e.onCreate(hwnd, createStruct);
+		};
+		
 	protected:
 		HWND hwnd;
 		CallbackClass e;
@@ -372,7 +379,17 @@ namespace Win {
 			DefWindowProc(hwnd, WM_SIZE, w, l);
 		}
 
-		
+		//onCreate(HWND, lParam, wParam)
+		void onCreate(HWND hwnd, lParam l, wParam w)
+			requires event_has_onCreate
+		{
+			return e.onCreate(hwnd, l, w);
+		}
+		void onCreate(HWND hwnd, lParam l, wParam w)
+			requires (not event_has_onCreate)
+		{
+			DefWindowProc(hwnd, WM_CREATE, w, l);
+		}
 	};
 
 	template <typename CallbackClass>
