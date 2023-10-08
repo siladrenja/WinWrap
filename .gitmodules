@@ -1,1 +1,4 @@
 
+[submodule "dependencies/SilaMath"]
+	path = dependencies/SilaMath
+	url = https://github.com/siladrenja/SilaMath

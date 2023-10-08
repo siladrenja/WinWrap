@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <thread>
 
-#include 
+#include "dependencies/SilaMath/SilaMath.hpp"
 
 namespace Win {
 	struct wParam;
@@ -296,9 +296,9 @@ namespace Win {
 		{
 			e.onResize(l, w);
 		};
-		constexpr static bool event_has_onCreate = requires (CallbackClass e, HWND hwnd, CREATESTRUCTA createStruct)
+		constexpr static bool event_has_onCreate = requires (CallbackClass e, HWND hwnd, const SMath::Rect<int>&rect, CREATESTRUCTA createStruct)
 		{
-			e.onCreate(hwnd, createStruct);
+			e.onCreate(hwnd, rect, createStruct);
 		};
 		
 	protected:
@@ -380,15 +380,15 @@ namespace Win {
 		}
 
 		//onCreate(HWND, lParam, wParam)
-		void onCreate(HWND hwnd, lParam l, wParam w)
+		void onCreate(HWND hwnd, const SMath::Rect<int>& rect, CREATESTRUCTA createStruct)
 			requires event_has_onCreate
 		{
-			return e.onCreate(hwnd, l, w);
+			return e.onCreate(hwnd, rect, createStruct);
 		}
-		void onCreate(HWND hwnd, lParam l, wParam w)
+		void onCreate((HWND hwnd, const SMath::Rect<int>& rect, CREATESTRUCTA createStruct)
 			requires (not event_has_onCreate)
 		{
-			DefWindowProc(hwnd, WM_CREATE, w, l);
+			//DefWindowProc(hwnd, WM_CREATE, w, l);
 		}
 	};
 
